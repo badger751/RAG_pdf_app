@@ -1,29 +1,38 @@
-import './App.css';
+import React, { useState } from 'react';
+import './styles.css'; // Import the stylesheet
 
-function App() {
+
+
+
+function ChatbotInterface() {
+  const [message, setMessage] = useState('');
+
+  const handleChange = (event) => {
+    setMessage(event.target.value);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src="Octocat.png" className="App-logo" alt="logo" />
-        <p>
-          GitHub Codespaces <span className="heart">♥️</span> React
-        </p>
-        <p className="small">
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </p>
+    <div className="chatbot-container">
+      <header className="chatbot-header">
+        <h2>Chatbot</h2>
+        <button className="add-pdf-button">Add PDF</button>
       </header>
+      <div className="chatbot-body">
+        {/* Chat history would go here */}
+      </div>
+      <footer className="chatbot-footer">
+        <label htmlFor="prompt-input">Enter your message:</label>
+        <input
+          id="prompt-input"
+          type="text"
+          value={message}
+          onChange={handleChange}
+          placeholder="Type your message here..."
+        />
+      </footer>
     </div>
   );
 }
 
-export default App;
+export default ChatbotInterface;
+
