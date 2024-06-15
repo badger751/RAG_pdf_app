@@ -58,65 +58,29 @@ In the project directory, you can run:
 
 ### `npm start`
 
-We've already run this for you in the `Codespaces: server` terminal window below. If you need to stop the server for any reason you can just run `npm start` again to bring it back online.
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) in the built-in Simple Browser (`Cmd/Ctrl + Shift + P > Simple Browser: Show`) to view your running application.
-
-The page will reload automatically when you make changes.\
-You may also see any lint errors in the console.
-
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
 ### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 ### `npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Known Issues and Workarounds
+While this application offers a powerful knowledge base solution, there are a couple of technical hurdles we're currently addressing:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+ **1. Frontend-Backend Integration:**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Issue: Directly connecting the ReactJS frontend to the FastAPI backend using traditional routing methods encounters challenges due to incompatibilities with Langchain.
+Explanation: Langchain's way of handling requests might not align perfectly with how FastAPI expects API endpoints to be defined. This can lead to errors or unexpected behavior when trying to integrate them seamlessly.
+Workaround: We're exploring alternative approaches to bridge the gap between the frontend and backend. Potential solutions include:
+Proxy Server: Setting up a proxy server to mediate communication between the frontend and backend. This can handle any necessary transformations or adaptations to ensure smooth data exchange.
+GraphQL: Utilizing GraphQL as an API layer that sits on top of FastAPI. GraphQL allows for a more flexible way to define queries and mutations, potentially providing a better fit for Langchain's functionalities.
+2. Agent Retrieval Chain Unpredictability:
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Issue: The agent retrieval chain, which likely involves fetching information from external sources using Zapier, might exhibit unpredictable behavior due to the deprecation of the Zapier toolkit in the latest Langchain community build.
+Explanation: Langchain is an actively developed project, and sometimes updates can introduce changes that break compatibility with previously used tools. In this case, the Zapier toolkit, which was likely used to integrate with Zapier's automation platform, might no longer function as intended in the latest Langchain version.
+Workaround: We'll need to investigate alternative methods for interacting with Zapier. Here are some possibilities:
+Official Zapier Integration: Check if Langchain's developers have introduced a more official or updated way to integrate with Zapier in the newer builds.
+Alternative Automation Tools: Explore other automation tools or libraries that might be compatible with the current Langchain version and offer similar functionalities to Zapier.
+We're actively working on resolving these issues to ensure a seamless and robust application experience. Stay tuned for updates as we implement the chosen workarounds or discover more permanent solutions.
