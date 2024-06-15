@@ -83,6 +83,8 @@ Workaround: We're exploring alternative approaches to bridge the gap between the
 Proxy Server: Setting up a proxy server to mediate communication between the frontend and backend. This can handle any necessary transformations or adaptations to ensure smooth data exchange.
 
 GraphQL: Utilizing GraphQL as an API layer that sits on top of FastAPI. GraphQL allows for a more flexible way to define queries and mutations, potentially providing a better fit for Langchain's functionalities.
+
+
 **2. Agent Retrieval Chain Unpredictability:**
 
 
