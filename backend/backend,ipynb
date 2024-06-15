@@ -1,0 +1,195 @@
+# Setting up
+
+!pip uninstall langchain
+!pip install langchain==0.0.339
+!pip install pymupdf
+!pip install pinecone-client
+#!pip install openai
+!pip install tiktoken
+#!pip install chromadb
+!pip install --quiet langchain
+!pip install pymupdf
+!pip install -U langchain-community
+!pip install fastapi
+#!pip install fastapi nest-asyncio pyngrok uvicorn
+!pip install langchain_google_genai
+#!pip install uvicorn
+
+#!wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+#!unzip -o ngrok-stable-linux-amd64.zip
+
+
+#import os
+#from google.colab import userdata
+#from pyngrok import conf
+#os.environ["NGROK"] = userdata.get("NGROK")
+#conf.get_default().auth_token = os.environ["NGROK"]
+
+
+#from fastapi import FastAPI, UploadFile, File
+#from fastapi.responses import JSONResponse
+#from fastapi.middleware.cors import CORSMiddleware
+
+
+
+#app = FastAPI()
+#app.add_middleware(
+ #   CORSMiddleware,
+  #  allow_origins=['*'],
+   # allow_credentials=True,
+    #allow_methods=['*'],
+   # allow_headers=['*'],
+#)
+#@app.get("/")
+#async def root():
+ #   return {"message": "Hello World"}
+
+
+# Run this cell and paste the API key in the prompt
+import os
+import getpass
+
+os.environ['GOOGLE_API_KEY'] = getpass.getpass('Gemini API Key:')
+
+Set up Pinecone API keys
+
+os.environ['PINECONE_API_KEY'] = getpass.getpass('Pinecone API Key:')
+
+# Index
+
+**Split the text from pdf into smaller chunks**
+
+There are many ways to split the text. We are using the text splitter that is recommended for generic texts. For more ways to slit the text check the [documentation](https://python.langchain.com/en/latest/modules/indexes/text_splitters.html)
+
+Create embeddings
+
+**Creating a vectorstore**
+
+A vectorstore stores Documents and associated embeddings, and provides fast ways to look up relevant Documents by embeddings.
+
+There are many ways to create a vectorstore. We are going to use Pinecone.
+
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain.document_loaders import PyMuPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.vectorstores import Pinecone
+       # Read the uploaded file content
+loader = PyMuPDFLoader("/content/Fullstack Internship Assignment.pdf")
+pages = loader.load_and_split()
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size = 1000,
+    chunk_overlap  = 200,
+    length_function = len,
+)
+
+docs = text_splitter.split_documents(pages)
+# If there is no environment variable set for the API key, you can pass the API
+# key to the parameter `google_api_key` of the `GoogleGenerativeAIEmbeddings`
+# function: `google_api_key = "key"`.
+gemini_embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+index_name = "langchain-demo"
+docsearch = Pinecone.from_documents(docs, gemini_embeddings, index_name=index_name)
+# if you already have an index, you can load it like this
+# docsearch = Pinecone.from_existing_index(index_name, embeddings)
+
+
+query = "What are the deliverables?"
+docs = docsearch.similarity_search(query)
+# print(len(docs))
+# print(docs[0])
+print(docs[0].page_content)
+
+
+
+The following code block uses Croma for creating a vectorstore. Uncomment it if you don't have access to pinecone and use it instead.
+
+# from langchain.vectorstores import Chroma
+# docsearch = Chroma.from_documents(docs, embeddings)
+
+Vectorstore is ready. Let's try to query our docsearch with similarity search
+
+# Making a question answering chain
+
+from langchain.chains import RetrievalQA
+from langchain import OpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+#defining LLM
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest" , temperature = .2)
+result = llm.invoke("Write about LangChain")
+qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=docsearch.as_retriever(search_kwargs={"k": 2}))
+
+Query the chain to test that it's working
+
+query = "describe the assignment"
+qa.run(query)
+
+# Preparing Zapier tool
+First, you need to get a Zapier API key here https://nla.zapier.com/get-started/ and add the the actions that you are going to use in Zapier
+
+os.environ["ZAPIER_NLA_API_KEY"] = os.environ.get("ZAPIER_NLA_API_KEY", "sk-ak-AwdSnj04RgvSbi7jndYfnN4aaI")
+
+Setting up a zapier toolkit. For more information visit [documentation](https://python.langchain.com/en/latest/modules/agents/tools/examples/zapier.html)
+
+from langchain.agents.agent_toolkits import ZapierToolkit
+from langchain.utilities.zapier import ZapierNLAWrapper
+
+zapier = ZapierNLAWrapper()
+toolkit = ZapierToolkit.from_zapier_nla_wrapper(zapier)
+
+!pip install --upgrade langchain-community
+!pip install --upgrade --quiet langchain-google-genai
+
+
+from langchain.agents import AgentType, initialize_agent
+from langchain_community.agent_toolkits import ZapierToolkit
+from langchain_community.utilities.zapier import ZapierNLAWrapper
+from langchain_google_genai import GoogleGenerativeAI
+
+llm = GoogleGenerativeAI(model="models/text-bison-001", google_api_key="AIzaSyCMwunlep3Ip5KBhiHOfSK0u5fFvnMlFxg", temperature=0.1)
+zapier = ZapierNLAWrapper()
+toolkit = ZapierToolkit.from_zapier_nla_wrapper(zapier)
+agent = initialize_agent(
+    toolkit.get_tools(), llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
+
+# Building agent
+Assembling it all together into an agent.
+
+from langchain.agents import AgentType
+from langchain.agents import initialize_agent, Tool
+from langchain.memory import ConversationBufferMemory
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+
+#defining the tools for the agent
+tools = [
+    Tool(
+        name = "Demo",
+        func=qa.run,
+        description="use this as the primary source of context information when you are asked the question. Always search for the answers using this tool first, don't make up answers yourself"
+    ),
+] + toolkit.get_tools()
+
+
+#setting a memory for conversations
+memory = ConversationBufferMemory(memory_key="chat_history")
+
+#Setting up the agent
+agent_chain = initialize_agent(tools, llm, agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION, verbose=True, memory=memory)
+
+Quering the agent
+
+*To get an agent do what you want, the prompt should be constructed properly. For user facing apps, we need to look at prompt templates and also figure out if chat is the best interface*
+
+agent_chain.run(input="What Techstack does the project requiee?")
+
+agent_chain.run(input="Email the answer to email@gmail.com and mention that this email was sent by AI")
+
+#import nest_asyncio
+#from pyngrok import ngrok
+#import uvicorn
+#conf.get_default().auth_token = "2hroESKB76j8pcIk0vm0JZRj8c5_3b1etdxpMoiMNTVMgbpAt"  # Set your authtoken here
+#ngrok_tunnel = ngrok.connect(8000)
+#print('Public URL:', ngrok_tunnel.public_url)
+#nest_asyncio.apply()
+#print(f"Received request with method: {request.method}")
+#uvicorn.run(app, port=8000)
