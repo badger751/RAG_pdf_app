@@ -2,23 +2,42 @@
 This repository houses a complete application enabling:
 
  **PDF Ingestion:** Users can upload PDF documents, forming the foundation of your custom knowledge base.
+
+ 
 **Text Extraction:** The system efficiently processes uploaded PDFs to extract their textual content.
+
+
+
 **Vector Embeddings:** Langchain generates dense vector representations of the extracted text, capturing semantic relationships.
+
+
 **Pinecone Storage:** The application utilizes Pinecone, a vector database, to store these embeddings for fast and effective retrieval.
+
 **AI-Powered Query Answering:** Leverage Google Generative AI as a large language model (LLM) to process user queries and retrieve relevant PDFs based on their semantic meaning using Pinecone's similarity search.
+
+
 **Zapier Integration:** Automate workflows by connecting to external services through Zapier's platform.
 Tech Stack:
 
 **Frontend:** ReactJS (https://react.dev/) for interactive user interface.
+
+
 **Backend:**
 Langchain ([https://www.amazon.com/Generative-AI-LangChain-language-ChatGPT/dp/1835083463]) for vector embedding generation.
 FastAPI ([https://fastapi.tiangolo.com/]) for building a robust and efficient API.
-**LLM:** Google Generative AI ([Bard google ai ON [invalid URL removed]]) for contextually understanding user queries.
-**Vector Database:** Pinecone ([https://www.pinecone.io/]) for storing and searching vector embeddings.
-**Automation:** Zapier ([https://zapier.com/]) for connecting the application with other services.
-Installation:
 
-# Prerequisites:
+
+**LLM:** Google Generative AI ([Bard google ai ON [invalid URL removed]]) for contextually understanding user queries.
+
+
+**Vector Database:** Pinecone ([https://www.pinecone.io/]) for storing and searching vector embeddings.
+
+
+**Automation:** Zapier ([https://zapier.com/]) for connecting the application with other services.
+
+# Installation:
+
+**Prerequisites:**
 Node.js and npm (or yarn) installed (https://nodejs.org/en)
 A Pinecone account and API key (https://www.pinecone.io/)
 Google Generative AI access (details may vary)
