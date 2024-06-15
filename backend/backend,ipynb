@@ -126,7 +126,7 @@ qa.run(query)
 # Preparing Zapier tool
 First, you need to get a Zapier API key here https://nla.zapier.com/get-started/ and add the the actions that you are going to use in Zapier
 
-os.environ["ZAPIER_NLA_API_KEY"] = os.environ.get("ZAPIER_NLA_API_KEY", "sk-ak-AwdSnj04RgvSbi7jndYfnN4aaI")
+os.environ["ZAPIER_NLA_API_KEY"] = os.environ.get("ZAPIER_NLA_API_KEY", "your zapier api key")
 
 Setting up a zapier toolkit. For more information visit [documentation](https://python.langchain.com/en/latest/modules/agents/tools/examples/zapier.html)
 
